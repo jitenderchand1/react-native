@@ -1,46 +1,51 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableHighlight } from 'react-native';
-import { Permissions, Constants } from 'expo';
+import { StackNavigator } from 'react-navigation';
+import Login from './screens/login.screen';
+import Listing from './screens/listing.screen';
+import Detail from './screens/detail.screen';
+import { Provider } from 'react-redux';
+import configureStore from './store'
+import { createStore, applyMiddleware } from 'redux';
+const store = configureStore();
 
-export default class App extends Component {
 
-  async _getNotification(){
-    const { status } = await Permissions.askAsync(Permissions.CONTACTS);
-    if (status !== 'granted') {
-      alert('Hey! You might want to enable notifications for my app, they are good.');
+const routes = {
+  Login:{
+    screen: Login,
+    navigationOptions:{
+      title:'Landing Screen'
     }
-  }
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <TouchableHighlight onPress={this._getNotification}>
-          <View style={styles.button}>
-            <Text style={{color:'#fff'}}>Notification</Text>
-          </View>
-        </TouchableHighlight>
-      </View>
-    );
+  },
+  Listing:{
+    screen: Listing,
+    title:'Listing',
+    navigationOptions:{
+      title:'listing Screen'
+    }
+  },
+  Detail:{
+    screen: Detail,
+    navigationOptions:{
+      title:'Detail Screen'
+    }
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#ecf0f1',
-  },
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#34495e',
-  },
-  button:{
-    backgroundColor:'#056ECF',
-    padding:10,
+
+const Stacks = StackNavigator(routes,{
+  initialRouteName:'Login'
+})
+
+
+
+
+export default class App extends Component{
+  render(){
+    return(
+      <Provider store={store}>
+        <Stacks />
+      </Provider>
+    )
   }
-});
+}
+
